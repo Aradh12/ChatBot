@@ -49,7 +49,7 @@ def takeCommand():
     return query
 
 def diagnosis():
-    df=pd.read_csv('medibot\Training.csv')
+    df=pd.read_csv('medibot\\Training.csv')
     for i in df.columns[:-1]:
         if 1 in list(df[i]):
             print("do you feel",*i.split("_"))
@@ -57,11 +57,7 @@ def diagnosis():
             o.lower()
             if o=='yes':
                 df= df[df[i] != 0]
-    out=list(set(df['prognosis']))
-    if len(out)==1:
-        return ''.join(out)
-    else:
-        return ' and '.join(out)
+    return list(set(df['prognosis']))[0]
 
 if __name__ == "__main__":
     wishMe()
@@ -84,18 +80,44 @@ if __name__ == "__main__":
         dis=diagnosis()
         out=name,' you are suffering with',dis
         speak(out)
-        print(out)
+        print(name,'you are suffering with',dis)
 
-        print('Do you need the Doctor related to your disease ?')
-        speak('Do you need the Doctor related to your disease')
-        
+        d=pd.read_csv('medibot\\symptom_Description.csv')
+        out=d.loc[d['disease']==dis]['description'].values[0]
+        speak(out)
+        print('Disease discription :',out)
 
-        print('To retest give commomnd retest ')
+        p=pd.read_csv('medibot\\symptom_precaution.csv')
+        out=p.loc[p['disease']==dis]
+        out=[out['p1'].values[0],out['p2'].values[0],out['p3'].values[0],out['p4'].values[0]]
+        speak('precaution to be taken by you are ')
+        for i in out:
+            speak(i)
+        print('Disease precaution :' , ','.join(out))
+
+        print('Do you need any Doctor related to your disease ?')
+        speak('Do you need any Doctor related to your disease')
+        query=input().lower()
+        #query = takeCommand().lower()
+        if 'yes' in query:
+            n=list(d['disease']).index(dis)
+            dc=pd.read_csv('medibot\\doctors_dataset.csv')
+            print(dc['doc'].values[n])
+            speak(dc['doc'].values[n])
+            print(dc['link'].values[n])
+            speak('Checkout the link to get the doctor details')
+
+        print('\nTo retest give commomnd retest ')
         print('To shut down me say thank you')
+
         speak('To retest give commomnd retest or To shut down me say thank you')
         query=input().lower()
         #query = takeCommand().lower()
-
+        if 'retest' in query:
+            continue
         if 'thank you' in query:
             speak('Have a good day to you')
+            quit()
+        else:
+            speak('Sorry you hit a wrong input bye bye ')
             quit()
