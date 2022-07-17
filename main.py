@@ -50,7 +50,8 @@ def takeCommand():
 if __name__ == "__main__":
     wishMe()
     while True:
-        query = takeCommand().lower()
+        query=input()
+        #query = takeCommand().lower()
         if 'wikipedia' in query:
             speak('Searching Wikipedia...')
             query = query.replace("wikipedia", "")
@@ -71,3 +72,7 @@ if __name__ == "__main__":
         elif 'the time' in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")    
             speak(f"Sir, the time is {strTime}")
+
+        elif 'go to sleep' in query:
+            speak('Have a good day to you')
+            quit()
